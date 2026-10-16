@@ -30,23 +30,29 @@ and how misbeliefs relate to policy support.
 
 ## What runs
 
-The dataset loads with its labels, and the descriptive core of the paper runs:
-summary statistics, `ttest`/`ttesti`, `codebook`, `tab`, and the robust OLS
-regressions of Table A2 (`reg … $controls $w_moderators, robust` plus
-`est sto`). Cells that use features stats.camp has not implemented yet error
-visibly without stopping the rest of the file — they are left in place as
-implementation targets:
+The whole script runs in stats.camp. On 2026-10-15 it was executed in Stata
+19.5 and in the native engine on scratch copies, and all 581 result rows
+(summaries, `ttesti`, `codebook` counts, the robust OLS regressions, `suest`
+with the two cross-equation `test` lines, every `lincom`, and the `esttab`
+cells of Tables A2–A4) are equal at the displayed precision. `snapshot erase`,
+`version 18`, `cap`, `est sto` with reused names, value-labelled treatment
+dummies in `if` conditions and regressions, and the `esttab` layout options
+(`compress`, `b()`/`se()` formats, `varwidth()`, `modelwidth()`, `nonotes`,
+`addnotes()`, `label`, `mtitles()`, `title()`, empty `drop()`/`order()`) all
+work.
 
-- `snapshot`, `suest` (and the two cross-equation `test` lines after it),
-  `version`, `cap`, `set more off`.
-- Regressions and `if` conditions involving the value-labeled treatment
-  dummies (`treatment`, `w_corrected`, `u_corrected`, `misbelief`): the
-  engine currently decodes value-labeled variables as strings, so numeric
-  comparisons and regressions on them fail.
-- `esttab` layout options (`compress`, `varwidth`, `addnotes`, …) and the
-  `twoway lfit` figure options (`xline`, `graphregion`, …).
-- `est sto` re-using an existing name (Stata silently replaces; the engine
-  errors).
+Remaining differences are presentational:
+
+- `esttab` places a coefficient that first appears in a later model after
+  `Constant` (Tables A2 and A3); estout keeps the constant last.
+- `codebook` prints its own layout rather than Stata's `Type:`/`Range:`/
+  `Unique values:`/`Mean:`/`Percentiles:` block.
+- `ttesti` prints a `Group |` header and six-digit standard errors.
+- Figures 1 and 2 (`twoway lfit`) are identical to Stata's since
+  2026-10-15: a lone `lfit` shows no legend, and the Control/Corrected legend
+  stays inside at `position(2) ring(0)`. See `aea_replication/figure_comparison.html` in the main repository.
+
+[TODO.md](TODO.md) tracks these items.
 
 ## Changes from the original package
 
@@ -54,8 +60,8 @@ implementation targets:
   original README asks each replicator to fill in) was replaced with the
   repository-relative path to the `.dta` file, and the line was uncommented.
 - Stata abbreviations were spelled out (`gl` → `global`, `reg …, r` →
-  `reg …, robust`) because stats.camp does not resolve these abbreviations
-  yet. Semantics are identical.
+  `reg …, robust`) in an earlier revision; both forms are accepted now, and the
+  spelled-out form is kept. Semantics are identical.
 - No other changes.
 
 ## Source and attribution
